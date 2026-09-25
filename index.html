@@ -30,7 +30,7 @@
       --cor-cartao:    #ffffff;   /* MUDE AQUI: cor do cartao central */
       --cor-texto:     #1b1f24;   /* MUDE AQUI: cor do texto */
       --cor-erro:      #b42318;   /* cor das mensagens de erro */
-      --cor-sucesso:   #1a7f37;   /* cor das mensagens de sucesso */
+      --cor-sucesso:   #0f5132;   /* cor das mensagens de sucesso */
     }
 
     /* Daqui para baixo, mexa apenas se quiser. Nao e obrigatorio. */
@@ -42,7 +42,6 @@
       margin: 0;
       min-height: 100vh;
       padding: 30px;
-      display: flex;
       align-items: center;
       justify-content: center;
       font-size: 16px;
@@ -50,6 +49,28 @@
     .dashboard{
       max-width: 1200px;
       margin: 0 auto;
+    }
+    .dashboard-cabecalho {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #d0d7de;
+    } 
+    .botaocliente {
+      flex: none;
+      background: var(--cor-principal);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .botaocliente:hover {
+      opacity: 0.9;
     }
     .cartao {
       background: var(--cor-cartao);
@@ -69,14 +90,55 @@
     .cabecalho-modal h1 {
       margin: 0;
     }
-    .botaoFecha {
+    .grid-clientes {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      min-height: calc(100vh - 150px); 
+      align-content: start; 
+    }
+    .blob-cliente {
+      background: #ffffff;
+      border: 1px solid #d0d7de;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .cabecalho-blob {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+    .cabecalho-blob h3 {
+      margin: 0;
+      color: #1b1f24; 
+      font-size: 18px;
+    }
+    .botao-remover {
       flex: none;
+      background: #b42318;
+      color: white;
+      border: none;
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .botaoFecha {
+      flex: none !important;
       border: none;
       color: rgb(156, 0, 0);
       font-size: 20px;
       font-weight: bold;
       cursor: pointer;
       padding: 8px;
+      background: transparent;
     }
     dialog {
       border: none;
@@ -123,9 +185,21 @@
     /* PRINCIPIO (Aula 4): saida de emergencia - botao cancelar sempre visivel */
     .secundario { background: #eef1f5; color: var(--cor-texto); }
 
-    .mensagem { margin-top: 16px; font-size: 14px; min-height: 20px; }
+    .mensagem {
+      display: none; 
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .mensagem.sucesso {
+      display: block;
+      background-color: #d1e7dd;
+      color: var(--cor-sucesso);
+      border: 1px solid #badbcc;
+    }
     .mensagem.erro { color: var(--cor-erro); }
-    .mensagem.sucesso { color: var(--cor-sucesso); }
   </style>
 </head>
 
@@ -133,16 +207,17 @@
   <!-- ================= AREA DE CONTEUDO (B) ================= -->
   <!-- Troque os textos entre as marcas MUDE AQUI pelo conteudo da SUA tela. -->
   
-  <!-- Botão de adicionar cliente-->
+  
   <div class="dashboard">
     <header class="dashboard-cabecalho">
       <h1>CRM - ELO Coworking</h1>
       <button id="botao-novo-cliente" class="botaocliente">+ Cliente</button>
     </header>
+    
+    <!-- PRINCIPIO (Aula 4): projeto para erros - espaco reservado para feedback -->
+    <p id="mensagem" class="mensagem"></p> 
 
-    <!-- Aqui é o feed onde os blobs vão aparecer -->
     <div id="lista-clientes" class="grid-clientes">
-      <!-- Os cartões serão injetados aqui pelo JavaScript depois -->
     </div>
   </div>
 
@@ -175,17 +250,17 @@
         </select>
 
         <label for="importancia"><!-- MUDE AQUI -->Nível de Importância</label>
-        <select id="imporanticia" required>
+        <select id="importancia" required>
           <option value="" disabled selected>Selecione um nível</option>
-          <option value="lead">Baixo</option>
-          <option value="ativo">Médio</option>
-          <option value="inativo">Alto</option>
+          <option value="baixo">Baixo</option>
+          <option value="medio">Médio</option>
+          <option value="importante">Alto</option>
         </select>
   
-        <label for="email"><!-- MUDE AQUI -->Data de último contato</label>
+        <label for="dataultcont"><!-- MUDE AQUI -->Data de último contato</label>
         <input type="date" id="dataultcont" required>
   
-        <label for="email"><!-- MUDE AQUI -->Data de última locação</label>
+        <label for="detaultloc"><!-- MUDE AQUI -->Data de última locação</label>
         <input type="date" id="detaultloc">
   
   
@@ -195,8 +270,7 @@
           <button type="submit" class="principal"><!-- MUDE AQUI -->Cadastrar</button>
         </div>
   
-        <!-- PRINCIPIO (Aula 4): projeto para erros - espaco reservado para feedback -->
-        <p id="mensagem" class="mensagem"></p>
+
       </form>
     </main>
   
@@ -223,15 +297,60 @@
     })
 
     const form = document.getElementById('formulario');
-    const msg = document.getElementById('mensagem');
+    const listaClientes = document.getElementById('lista-clientes');
+    const msg = document.getElementById('mensagem'); // Variável recuperada
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+
+      const nome = document.getElementById('nome').value;
+      const email = document.getElementById('email').value;
+
+      const selectRelacionamento = document.getElementById('relacionamento');
+      const textoRelacionamento = selectRelacionamento.options[selectRelacionamento.selectedIndex].text;
+
+      const selectImportancia = document.getElementById('importancia');
+      const valorImportancia = selectImportancia.value;
+      const textoImportancia = selectImportancia.options[selectImportancia.selectedIndex].text;
+
+      let iconeImportancia = '🟢';
+      if (valorImportancia === 'medio') iconeImportancia = '🟡';
+      if (valorImportancia === 'importante') iconeImportancia = '🔴';
+
+      const formatarData = (dataOriginal) => {
+        if (!dataOriginal) return 'Não informada';
+        const partes = dataOriginal.split('-');
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+      };
+
+      const dataContato = formatarData(document.getElementById('dataultcont').value);
+      const dataLocacao = formatarData(document.getElementById('detaultloc').value);
+
+      listaClientes.innerHTML = listaClientes.innerHTML + `
+        <div class="blob-cliente">
+          <div class="cabecalho-blob">
+            <h3>${nome}</h3>
+            <button class="botao-remover" onclick="if(confirm('Tem certeza que deseja apagar o cliente ${nome}?')) this.closest('.blob-cliente').remove()">Apagar</button>
+          </div>
+          <p><strong>E-mail:</strong> ${email}</p>
+          <p><strong>Status:</strong> ${textoRelacionamento}</p>
+          <p><strong>Importância:</strong> ${iconeImportancia} ${textoImportancia}</p>
+          <p><strong>Último Contato:</strong> ${dataContato}</p>
+          <p><strong>Última Locação:</strong> ${dataLocacao}</p>
+        </div>
+      `;
+
+      modal.close();
+      form.reset();
+
+      //feedback da mensagem
+      msg.textContent = 'Cliente adicionado com sucesso!';
       msg.className = 'mensagem sucesso';
-      msg.textContent = 'Cadastro enviado com sucesso. (mensagem de exemplo)';
-    });
-    form.addEventListener('reset', function () {
-      msg.className = 'mensagem';
-      msg.textContent = '';
+
+      setTimeout(() => {
+        msg.className = 'mensagem';
+        msg.textContent = '';
+      }, 3000);
     });
   </script>
 </body>
